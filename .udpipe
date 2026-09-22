@@ -1,0 +1,21 @@
+#import the document
+text <- readLines("doc_name.txt", 
+                  skipNul = TRUE) |>
+  stringr::str_squish() |>
+  (\(x) x[nchar(x) > 0])() |>
+  paste(collapse = " ")
+
+#total characters of the text document
+substr(text, 1, 21357)
+
+#annotate each lexeme 
+text_ann <- udpipe::udpipe_annotate(m_eng, x = text) |>
+  as.data.frame() |>
+  dplyr::select(doc_id, sentence_id, token_id, token, lemma, 
+                upos, xpos, dep_rel, head_token_id)
+head(text_ann, 21357)
+
+#export into a .csv 
+options(max.print = 1000000)
+
+write.csv(text_ann, "doc_name.csv")
